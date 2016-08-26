@@ -14,8 +14,8 @@ import sys
 import os
 
 
-def binarize(x, sz=71):
-    return tf.to_float(tf.one_hot(x.shape, sz, on_value=1, off_value=0, axis=-1))#depth is 71.if x is (m,n),the output is m*sz*n,x is 1,other is 0.
+def binarize(x):
+	 return tf.to_float(tf.one_hot(x, 71, on_value=1, off_value=0, axis=-1))#depth is 71.if x is (m,n),the output is m*sz*n,x is 1,other is 0.
 
 
 
@@ -121,6 +121,9 @@ def char_block(in_layer, nb_filter=[64, 100], filter_length=[3, 3], subsample=[2
     block = Dense(128, activation='relu')(block)
     return block
 
+
+
+
 max_features = len(chars) + 1#max_character_set
 char_embedding = 40
 
@@ -128,11 +131,12 @@ document = Input(shape=(max_sentences, maxlen), dtype='int64')#input layer
 
 in_sentence = Input(shape=(maxlen,), dtype='int64')#input layers
 #problem here!!!!!why??
-embedded = Lambda(binarize, output_shape=binarize_outshape)#embedded is lamdad layer,binarize extract the output last layer.
-embedded = embedded(in_sentence) 
+
+embedded = Lambda(binarize, output_shape=binarize_outshape,input_shape=in_sentence.shape)#embedded is lamdad layer,binarize extract the output last layer.
 
 
-block2 = char_block(embedded, [100, 200, 200], filter_length=[5, 3, 3], subsample=[1, 1, 1], pool_length=[2, 2, 2])
+
+block2 = char_block(embedded(in_sentence), [100, 200, 200], filter_length=[5, 3, 3], subsample=[1, 1, 1], pool_length=[2, 2, 2])
 block3 = char_block(embedded, [200, 300, 300], filter_length=[7, 3, 3], subsample=[1, 1, 1], pool_length=[2, 2, 2])
 
 
