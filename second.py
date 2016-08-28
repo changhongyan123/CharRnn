@@ -1,21 +1,26 @@
 #mmodel
 import pandas as pd
-
+import numpy as np
 from keras.models import Model
 from keras.layers import Dense, Activation, Flatten, Input, Dropout, MaxPooling1D, Convolution1D
 from keras.layers import LSTM, Lambda, merge
 from keras.layers import Embedding, TimeDistributed
-import numpy as np
+import numpy as numpy
 import tensorflow as tf
 import re
 from keras import backend as K
 import keras.callbacks
 import sys
 import os
+import theano.tensor as T
 
 
-def binarize(x):
-	 return tf.to_float(tf.one_hot(x, 71, on_value=1, off_value=0, axis=-1))#depth is 71.if x is (m,n),the output is m*sz*n,x is 1,other is 0.
+
+sess = tf.Session()
+def binarize(x,se=71):
+	print type(x)
+	print sess.run(x)
+	return tf.to_float(tf.one_hot(tf.sess.run(x), sz, on_value=1, off_value=0, axis=-1))#depth is 71.if x is (m,n),the output is m*sz*n,x is 1,other is 0.
 
 
 
@@ -102,7 +107,7 @@ X_test = X[22500:]
 y_train = y[:20000]
 y_test = y[22500:]
 
-
+print X.shape
 def char_block(in_layer, nb_filter=[64, 100], filter_length=[3, 3], subsample=[2, 1], pool_length=[2, 2]):
     block = in_layer
     for i in range(len(nb_filter)):
@@ -132,11 +137,11 @@ document = Input(shape=(max_sentences, maxlen), dtype='int64')#input layer
 in_sentence = Input(shape=(maxlen,), dtype='int64')#input layers
 #problem here!!!!!why??
 
-embedded = Lambda(binarize, output_shape=binarize_outshape,input_shape=in_sentence.shape)#embedded is lamdad layer,binarize extract the output last layer.
+embedded = Lambda(binarize, output_shape=binarize_outshape)(in_sentence)#embedded is lamdad layer,binarize extract the output last layer.
 
 
 
-block2 = char_block(embedded(in_sentence), [100, 200, 200], filter_length=[5, 3, 3], subsample=[1, 1, 1], pool_length=[2, 2, 2])
+block2 = char_block(embedded, [100, 200, 200], filter_length=[5, 3, 3], subsample=[1, 1, 1], pool_length=[2, 2, 2])
 block3 = char_block(embedded, [200, 300, 300], filter_length=[7, 3, 3], subsample=[1, 1, 1], pool_length=[2, 2, 2])
 
 
