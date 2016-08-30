@@ -19,8 +19,7 @@ import theano.tensor as T
 sess = tf.Session()
 def binarize(x,se=71):
 	print type(x)
-	print sess.run(x)
-	return tf.to_float(tf.one_hot(tf.sess.run(x), sz, on_value=1, off_value=0, axis=-1))#depth is 71.if x is (m,n),the output is m*sz*n,x is 1,other is 0.
+	return tf.to_float(tf.one_hot(x, sz, on_value=1, off_value=0, axis=-1))#depth is 71.if x is (m,n),the output is m*sz*n,x is 1,other is 0.
 
 
 
