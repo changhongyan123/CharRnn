@@ -1,5 +1,5 @@
 #charRnn
-用character-level的方式建模
+用character-level的方式建模\n
 先将所有出现的符号放入数组，并将其与下标对应
 再利用one-hot对每一个符号进行构建
 在训练character的时候利用了三层卷积层
